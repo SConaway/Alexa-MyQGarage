@@ -1,15 +1,13 @@
-# Alexa-MyQGarage
-Using the Alexa Skills Kit to control your Chamberlain MyQ garage door.
+# Alexa-MyQLight
+Using the Alexa Skills Kit to control your Chamberlain MyQ Light.
 
 ## Description
-By using the Alexa Skills Kit and AWS Lambda, you can control your Chamberlain MyQ garage door through your Amazon Echo.
+By using the Alexa Skills Kit and AWS Lambda, you can control your Chamberlain MyQ light through your Amazon Echo.
 This code adapts [David Pfeffer's](https://github.com/pfeffed) unofficial [Chamberlain Liftmaster API](http://docs.unofficialliftmastermyq.apiary.io/) to a Python-based app you can use inside of AWS Lambda.
 
 ## Usage
-1. Create an Alexa Skills Kit (ASK) app, using the intent schema, custom slot values, and sample utterances in this repo. Choose an invocation name like `my garage door`.
-2. Replace `<MYQ_LOGIN_USERNAME>` and `<MYQ_LOGIN_PASSWORD>` in `main.py` with the username and password you created at Chamberlain, and substitute `amzn1.echo-sdk-ams.app.<your-alexa-skills-id>` with the ID of the ASK skill you created. The `APP_ID` should remain the same, it is Chamberlain specific and not specific to your MyQ account.
-3. Create a zip file for Lambda with the following command  (you'll need it later in step 6):
-
+1. Create an Alexa Skills Kit (ASK) app, using the intent schema, custom slot values, and sample utterances in this repo. Choose an invocation name like `light`.
+3. Use the pre-provided .zip or create your own zip file for Lambda with the following command  (you'll need it later in step 6):
         zip -r lambda-upload.zip main.py myq.py requests requests-2.9.1.dist-info
 
 4. Create a new [AWS Lambda](https://console.aws.amazon.com/lambda/home?region=us-east-1) function in the _us-east-1_ region. At "Select a Blueprint," press the "Next" button to skip.
@@ -17,8 +15,17 @@ This code adapts [David Pfeffer's](https://github.com/pfeffed) unofficial [Chamb
 6. Configure the function by giving it a name, description, and selecting the "Python 2.7" runtime. For "Code Entry Type," specify the ZIP file "lambda-upload.zip" that you created in Step 3.
 7. Change "Handler" to "main.lambda_handler", and use a "Create new role from templates" as your "Role".
 8. Give your role a name, like "MyQRole", and choose "Simple Microservice Permissions." Leave "Memory" and "VPC" at their defaults, and give a timeout of "15 seconds," then click "Next". A new page will open. Verify your details, then click "Create function."
-9. Modify your ASK skill with the [ARN](http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html) of your newly created function.
-10. Test your interactions with the ASK console. When you've got it working, try it on your Echo: `Alexa, ask my garage door to open`.
+9. Configure Environment Variables:
+            Key             Value
+            -------------   ---------------------------------------
+            username        <Enter your MyQ account username here>
+            password        <Enter your MyQ account password here>
+            skill_id        <Paste the Application ID of your Alexa Skill here (The one from step 4)>
+            lamp_id         <The ID of the Lamp you want to control>
+
+
+10. Modify your ASK skill with the [ARN](http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html) of your newly created function.
+11. Test your interactions with the ASK console. When you've got it working, try it on your Echo: `Alexa, ask the LIGHT to turn on`.
 
 ## If this worked, congratulations! If not, keep reading!
 Troubleshooting Alexa to Lambda interactions can be done via AWS Lambda. The Lambda function panel will have tabs for Code, Configuration, Triggers, and Monitoring. "Monitoring" is where you can view logs to see the requests that come in from the Alexa Skills Kit. Most of the time, you'll be able to find the error here. A lot of times, you'll see errors because you didn't change some of the default values in the `main.py` code in lines 14, 15, and 24.

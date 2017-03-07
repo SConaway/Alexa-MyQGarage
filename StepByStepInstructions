@@ -54,7 +54,7 @@
            you only need to copy the section after "amzn1.ask.skill." which is
            "2dc3256e-f143-41a6-ab8f-194c3df2d789"
     
-7.  Locate the folder that contains the extracted contents of the file downloaded in step 1
+/*7.  Locate the folder that contains the extracted contents of the file downloaded in step 1
     and edit the following contents of the "main.py" file in a text editor like "Notepad" 
     as shown below:
     
@@ -76,10 +76,9 @@
                     be replaced with your skills ID, everything else must remain untouched.
                     
     c.  Save your changes.
-                    
+*/
 8.  Create a zip file named "lambda-upload.zip" containing the edited "main.py" file, the "myq.py" file,
-    the "requests" folder and the "requests-2.9.1.dist-info" folder. Be sure to keep the folder structures
-    in tact.  You will be needing this zip file in step 11.c
+    the "requests" folder and the "requests-2.9.1.dist-info" folder, or use the pre-provided .zip. Be sure to keep the folder structures in tact.  You will be needing this zip file in step 11.c
 9.  Create a free/Basic Amazon webservice (AWS) account via url "aws.amazon.com"
 10. On the upper right corner of the AWS main page, just beside your AWS account name,
     shows a location that you need click on and select "US East (N. Virginia)"
@@ -109,8 +108,17 @@
         Code Entry Type  :  Upload a .ZIP file
         Function Package :  <Click the "Upload" button and select the 
                             "lambda-upload.zip" file that you created in step 8
-        
-        ----------------------------------------------------------------        
+
+        Environment Variables:
+
+            Key             Value
+            -------------   ---------------------------------------
+            username        <Enter your MyQ account username here>
+            password        <Enter your MyQ account password here>
+            skill_id        <Paste the Application ID of your Alexa Skill here (The one from step 4)>
+            lamp_id         <The ID of the Lamp you want to control>
+
+        ----------------------------------------------------------------
         Lambda function handler and role
         ----------------------------------------------------------------
         Handler          :  main.lambda_handler
@@ -159,14 +167,14 @@
     
     Assuming that your skill invocation name is "Garage", you would say
 
-    "Alexa, ask GARAGE if it's open"
+    "Alexa, ask LIGHT to turn on"
     
     OR
     
-    "Alexa, ask GARAGE to close"
+    "Alexa, ask LIGHT if it's on'"
     
 
 I hope this semi-step by step guide helps make your implementation easier.  If you encounter
 any problems, I would advise that you double check your "main.py" file and make sure that
-you have done your edits correctly.  Good luck!
+you have done your edits correctly, and that proper indentation is followed.  Good luck!
     
