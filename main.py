@@ -4,13 +4,32 @@ import json
 import time
 import myq
 
-USERNAME = "<MYQ_LOGIN_USERNAME>"
-PASSWORD = "<MYQ_LOGIN_PASSWORD>"
+USERNAME  = os.environ['username']
+PASSWORD  = os.environ['password']
+SKILL_ID  = os.environ['skill_id']
 mq = myq.MyQ(USERNAME,PASSWORD)
 
 def lambda_handler(event, context):
 
-    if event['session']['application']['applicationId'] != "amzn1.ask.skill.<your-alexa-skills-id>":
+
+    failFunc = "N"
+    
+    if (USERNAME == ""):
+        print("username environment variable cannot be blank and needs to be set to your MyQ username")
+        failFunc = "Y"
+    
+    if (PASSWORD == ""):
+        print("password environment variable cannot be blank and needs to be set to your MyQ password")
+        failFunc = "Y"
+    
+    if (SKILL_ID == ""):
+        print("skill_id environment variable cannot be blank and needs to be set to your Alexa Skill's Application ID")
+        failFunc = "Y"
+    
+    if (failFunc == "Y"):
+        raise
+    
+    if event['session']['application']['applicationId'] != SKILL_ID:
         print "Invalid Application ID"
         raise
     else:
@@ -69,87 +88,87 @@ def onSessionEnded(sessionEndedRequest, session):
 
 def getWelcomeResponse():
     cardTitle = "Welcome"
-    speechOutput = """You can open or close your garage door by saying, ask my garage door to open."""
+    speechOutput = """You can turn on or turn off your light by saying, ask my light to turn on."""
 
     # If the user either does not reply to the welcome message or says something that is not
     # understood, they will be prompted again with this text.
-    repromptText = 'Ask me to close your garage door by saying ask my garge door to close'
+    repromptText = 'Ask me to turn your light off by saying ask my light to turn off'
     shouldEndSession = True
 
     return (buildSpeechletResponse(cardTitle, speechOutput, repromptText, shouldEndSession))
 
 def moveIntent(intent):
     """
-    Ask my garage to {open|close|shut|go up|go down}
+    Ask my garage to {turned on|turned off|on|off}
         "intent": {
           "name": "StateIntent",
           "slots": {
-            "doorstate": {
-              "name": "doorstate",
+            "lightstate": {
+              "name": "lightstate",
               "value": "close"
             }
           }
         }
     """
-    if (intent['slots']['doorstate']['value'] == "close") or (intent['slots']['doorstate']['value'] == "shut") or (intent['slots']['doorstate']['value'] == "go down"):
-        mq.close()
-        speechOutput = "Ok, I'm closing your garage door"
-        cardTitle = "Closing your garage door"
-    elif (intent['slots']['doorstate']['value'] == "open") or (intent['slots']['doorstate']['value'] == "go up"):
-        mq.open()
-        speechOutput = "Ok, I'm opening your garage door"
+    if (intent['slots']['lightstate']['value'] == "off") or (intent['slots']['lightstate']['value'] == "turn off"):
+        mq.lamp_off()
+        speechOutput = "Ok, I'm turning off your light"
+        cardTitle = "turning off your light"
+    elif (intent['slots']['lightstate']['value'] == "on") or (intent['slots']['lightstate']['value'] == "turn on"):
+        mq.lamp_on()
+        speechOutput = "Ok, I'm turning on your light"
         cardTitle = speechOutput
     else:
-        speechOutput = "I didn't understand that. You can say ask the garage door to open or close"
+        speechOutput = "I didn't understand that. You can say ask the light to turn on or off"
         cardTitle = "Try again"
 
-    repromptText = "I didn't understand that. You can say ask the garage door if it's open, or tell it to open or close"
+    repromptText = "I didn't understand that. You can say ask the light if it's on, or tell it to turn on or off"
     shouldEndSession = True
 
     return(buildSpeechletResponse(cardTitle, speechOutput, repromptText, shouldEndSession))
 
 def stateResponse(intent):
     """
-    Ask my garage door if it's {open|closed}
+    Ask my light if it's {turned on|turned off}
         "intent": {
           "name": "StateIntent",
           "slots": {
-            "doorstate": {
-              "name": "doorstate",
-              "value": "closed"
+            "lightstate": {
+              "name": "lightstate",
+              "value": "turned off"
             }
           }
         }
     """
-    doorstate = mq.status()
+    lightstate = mq.lamp_status()
 
-    if (intent['slots']['doorstate']['value'] == "open") or (intent['slots']['doorstate']['value'] == "up"):
-        if doorstate == "open":
-            speechOutput = "Yes, your garage door is open"
-            cardTitle = "Yes, your garage door is open"
-        elif doorstate == "closed":
-            speechOutput = "No, your garage door is closed"
-            cardTitle = "No, your garage door is closed"
+    if (intent['slots']['lightstate']['value'] == "on") or (intent['slots']['lightstate']['value'] == "turned on"):
+        if lightstate == "on":
+            speechOutput = "Yes, your light is on"
+            cardTitle = "Yes, your light is on"
+        elif lightstate == "off":
+            speechOutput = "No, your light is off"
+            cardTitle = "No, your light is off"
         else:
-            speechOutput = "Your garage door is " + doorstate
-            cardTitle = "Your garage door is " + doorstate
+            speechOutput = "Your light is " + lightstate
+            cardTitle = "Your light is " + lightstate
 
-    elif (intent['slots']['doorstate']['value'] == "closed") or (intent['slots']['doorstate']['value'] == "shut") or (intent['slots']['doorstate']['value'] == "down"):
-        if doorstate == "closed":
-            speechOutput = "Yes, your garage door is closed"
-            cardTitle = "Yes, your garage door is closed"
-        elif doorstate == "open":
-            speechOutput = "No, your garage door is open"
-            cardTitle = "No, your garage door is open"
+    elif (intent['slots']['lightstate']['value'] == "off") or (intent['slots']['lightstate']['value'] == "turned off"):
+        if lightstate == "of":
+            speechOutput = "Yes, your light is off"
+            cardTitle = "Yes, your light is off"
+        elif lightstate == "on":
+            speechOutput = "No, your light is on"
+            cardTitle = "No, your light is on"
         else:
-            speechOutput = "Your garage door is " + doorstate
-            cardTitle = "Your garage door is " + doorstate
+            speechOutput = "Your light is " + lightstate
+            cardTitle = "Your light is " + lightstate
 
     else:
-        speechOutput = "I didn't understand that. You can say ask the garage door if it's open"
+        speechOutput = "I didn't understand that. You can say ask the light if it's turned on"
         cardTitle = "Try again"
 
-    repromptText = "I didn't understand that. You can say ask the garage door if it's open"
+    repromptText = "I didn't understand that. You can say ask the light if it's turned on"
     shouldEndSession = True
 
     return(buildSpeechletResponse(cardTitle, speechOutput, repromptText, shouldEndSession))

@@ -12,14 +12,11 @@ class MyQ:
     DEVICE_LIST_ENDPOINT = "api/v4/UserDeviceDetails/Get"
     DEVICE_SET_ENDPOINT = "api/v4/DeviceAttribute/PutDeviceAttribute"
 
-    username = "<MYQ_LOGIN_USERNAME>"
-    password = "<MYQ_LOGIN_PASSWORD>"
-
     myq_userid                  = ""
     myq_security_token          = ""
     myq_cached_login_response   = ""
     myq_device_id               = False
-    myq_lamp_device_id          = False
+    myq_lamp_device_id          = os.environ['lamp_id']
 
     def __init__(self, username, password):
         self.username = username
@@ -136,9 +133,8 @@ class MyQ:
             print("Device => " + dev["MyQDeviceTypeName"])
             if (not self.myq_device_id) and dev["MyQDeviceTypeName"] in ["VGDO", "GarageDoorOpener", "Garage Door Opener WGDO"]:
                 self.myq_device_id = str(dev["MyQDeviceId"])
-            elif (not self.myq_lamp_device_id) and dev["MyQDeviceTypeName"] == "LampModule":
-                self.myq_lamp_device_id = str(dev["MyQDeviceId"])
-                
+                print(self.myq_device_id)
+
     def check_door_state(self):
         return self.check_device_state(self.myq_device_id, "doorstate")
     

@@ -4,8 +4,8 @@
       "intent": "StateIntent",
       "slots": [
         {
-          "name":"doorstate",
-          "type":"DOOR_STATES"
+          "name":"lightstate",
+          "type":"LIGHT_STATES"
         }
       ]
     },
@@ -13,8 +13,8 @@
       "intent": "MoveIntent",
       "slots": [
         {
-          "name":"doorstate",
-          "type":"DOOR_STATES"
+          "name":"lightstate",
+          "type":"LIGHT_STATES"
         }
       ]
     },

@@ -1,7 +1,7 @@
-StateIntent is my door {doorstate}
-StateIntent is it {doorstate}
-StateIntent if it's {doorstate}
-MoveIntent to {doorstate}
+StateIntent is my light {lightstate}
+StateIntent is it {lightstate}
+StateIntent if it's {lightstate}
+MoveIntent to {lightstate}
 HelpIntent help
 HelpIntent help me
 HelpIntent what can I ask you
